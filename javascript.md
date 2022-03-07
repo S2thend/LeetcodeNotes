@@ -97,6 +97,8 @@ var lengthOfLongestSubstring = function(s) {
 
     for(let i in s){
         if( last_position.has( s.charAt(i) ) ){
+            //如果前一个重复的字符在当前起点之前，无视他；
+            //如果前一个重复的字符在当前起点之后，把起点挪到前一个重复字符后一位
             cur_start_pos = Math.max( cur_start_pos, Number(last_position.get( s.charAt(i) )) + 1 )
         }
 
