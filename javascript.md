@@ -85,3 +85,45 @@ var addTwoNumbers = function(l1, l2) {
 ```
 复杂度：O(max(m,n))，其中 mm 和 nn 分别为两个链表的长度。我们要遍历两个链表的全部位置，而处理每个位置只需要 O(1)O(1) 的时间。
 
+## 3  无重复字符的最长子串
+
+给定一个字符串s，请你找出其中不含有重复字符的 最长子串 的长度。
+
+```js
+var lengthOfLongestSubstring = function(s) {
+    let last_position = new Map()
+    let cur_start_pos = 0 
+    let max_len = 0
+
+    for(let i in s){
+        if( last_position.has( s.charAt(i) ) ){
+            cur_start_pos = Math.max( cur_start_pos, Number(last_position.get( s.charAt(i) )) + 1 )
+        }
+
+        max_len = Math.max(max_len, Number(i) + 1 - cur_start_pos)
+
+        last_position.set(s.charAt(i),i)
+    }
+
+    return max_len
+};
+```
+```js
+//>90%优化
+var lengthOfLongestSubstring = function(s) {
+    let last_position = new Map()
+    let cur_start_pos = 0 
+    let max_len = 0
+    for(let i = 0; i<s.length; i++){
+        if( last_position.has( s.charAt(i) ) ){
+            if(cur_start_pos < last_position.get( s.charAt(i) ) + 1){
+                cur_start_pos = last_position.get( s.charAt(i) ) + 1
+            }
+        }
+        max_len = Math.max(max_len, i + 1 - cur_start_pos)
+        last_position.set(s.charAt(i),i)
+    }
+    return max_len
+};
+```
+复杂度：O(N)，其中N是字符串的长度。会遍历整个字符串一次。
