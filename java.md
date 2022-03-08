@@ -133,23 +133,75 @@ public class Solution {
 
 
 ```java
-public class Solution {
-    public int lengthOfLongestSubstring(String s) {
-        int n = s.length(), ans = 0;
-        //1.hashmap用于存储出现某字符的最新位置的值
-        Map<Character, Integer> map = new HashMap<>(); // current index of character
-        // try to extend the range [i, j]
-        for (int j = 0, i = 0; j < n; j++) {
-            if (map.containsKey(s.charAt(j))) {
-                //2.如果j最后出现的位置比i靠后，则更新i的值为此值后面一位，跳过最后出现的位置之前所有的字符
-                i = Math.max(map.get(s.charAt(j)) + 1, i);
-            }
-            ans = Math.max(ans, j - i + 1);
-            //3.由于hashmap键不重复的特性，更新后的值是当前字母最后出现的位置
-            map.put(s.charAt(j), j);
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int total_length = nums1.length + nums2.length;
+        int nums_to_be_excluded = total_length/2;
+
+        if( (total_length+2) % 2 == 0 ){
+            double median = (  excludeIndex( nums1, nums2, nums_to_be_excluded ) + excludeIndex( nums1, nums2, nums_to_be_excluded - 1 )  ) / 2.0;
+            return median;
+        }else{
+            double median = excludeIndex(nums1, nums2, nums_to_be_excluded);
+            return median;
         }
-        return ans;
+    } 
+
+    public int excludeIndex(int[] nums1, int[] nums2, int ntbx){
+        //最近的已去除元素的索引，下一个索引是未去除元素
+        int nums1_head_ptr = -1;
+        int nums2_head_ptr = -1;
+        int per_list = 0;
+
+        while(true){
+            System.out.print(nums1_head_ptr + "-" + nums2_head_ptr + "\n");
+            System.out.print("ntbx"+ ntbx + "\n");
+            per_list = ntbx/2;
+            
+            //最近已去除元素的索引等于数组最后一个元素的索引，此时数组已空
+            if(nums1_head_ptr == nums1.length - 1){
+                //去除剩余元素并，返回去除元素的后一位
+                System.out.print("res1" + nums2[nums2_head_ptr + ntbx + 1] +"end");
+                return nums2[nums2_head_ptr + ntbx + 1];
+            }
+            if(nums2_head_ptr == nums2.length -1){
+                System.out.print("res2" + nums1[nums1_head_ptr +ntbx + 1] +"end");
+                return nums1[nums1_head_ptr +ntbx + 1];
+            }
+
+            //此时per_list=0, 移除将停止
+            if(ntbx == 1){
+                //从两数组中未被移除的两个值选一个小的，即为合并后已经被移除元素的下一个元素
+                System.out.print("res3" + Math.min(nums1[nums1_head_ptr+1] , nums2[nums2_head_ptr+1]) +"end");
+                if(nums1[nums1_head_ptr+1] < nums2[nums2_head_ptr+1]){
+                    nums1_head_ptr += 1;
+                }else{
+                    nums2_head_ptr += 1;
+                }
+                ntbx = 0;
+            }
+            if(ntbx == 0){
+                return Math.min(
+                    nums1_head_ptr+1 == nums1.length ? Integer.MAX_VALUE : nums1[nums1_head_ptr+1] ,
+                    nums2_head_ptr+1 == nums2.length ? Integer.MAX_VALUE : nums2[nums2_head_ptr+1]
+                );
+            }
+            //如果移除元素大于数组剩余元素，则仅移除剩余全部元素
+            int nums1_rmv = nums1_head_ptr + per_list > nums1.length - 1 ? nums1.length - 1 - nums1_head_ptr : per_list;
+            int nums2_rmv = nums2_head_ptr + per_list > nums2.length - 1 ? nums2.length - 1 - nums2_head_ptr :  per_list;
+
+
+
+            if( nums1[nums1_head_ptr + nums1_rmv] > nums2[nums2_head_ptr + nums2_rmv]){
+                nums2_head_ptr += nums2_rmv;
+                ntbx -= nums2_rmv;
+            }else{
+                nums1_head_ptr += nums1_rmv;
+                ntbx -= nums1_rmv;
+            }
+
+        }
     }
 }
 ```
-复杂度：O(N)，其中N是字符串的长度。左指针和右指针分别会遍历整个字符串一次。
+时间复杂度：O(log(m+n))，其中m和n分别是两个数组的长度，数组初始时有k=(m+n)/2 或 k=(m+n)/2+1，每一轮循环可以将查找范围减少一半，因此时间复杂度是O(log(m+n))。
