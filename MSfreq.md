@@ -67,3 +67,45 @@ class Solution:
         
         return validate(root, low, high)
 ```
+
+
+## 743. 网络延迟时间
+有 n 个网络节点，标记为 1 到 n。
+
+给你一个列表 times，表示信号经过 有向 边的传递时间。 times[i] = (ui, vi, wi)，其中 ui 是源节点，vi 是目标节点， wi 是一个信号从源节点传递到目标节点的时间。
+
+现在，从某个节点 K 发出一个信号。需要多久才能使所有节点都收到信号？如果不能使所有节点收到信号，返回 -1 。
+示例 1：
+![示例 1](https://assets.leetcode.com/uploads/2019/05/23/931_example_1.png)
+输入：times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2
+输出：2
+```py
+class Solution:
+    def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:
+        # initialize vertexes list for storing distance from begining vertex 
+        vertexes = [ 0 if i+1 == k else math.inf for i in range(n)]
+
+        # SEE BELOW for explaination of ABOVE init process 
+        # # n is the number of vertexes
+        # for i in range(0,n):
+        #     # k is begining vertex's place of order
+        #     if i+1 == k:
+        #         # distance is 0 from begining to begining
+        #         vertexes[i] = 0 
+        #     else:
+        #         # all other distance begins with infinite
+        #         vertexes[i] = math.inf
+
+        # RELAXATION OF EDGES
+        # worst case is we can find distances one vertex at a time, 
+        # so we need go n-1 loops in worst case
+        # this is also important for update because we check weight from every begining point of a edge 
+        for i in range(1,n):
+            # "times" equals to edges, stores begin[0],end[1],weights[2] 
+            for edge in times:
+                # if going through this current edge shorter the path then update
+                if( vertexes[ edge[1] - 1 ] > vertexes[ edge[0] - 1 ] + edge[2] ):
+                    vertexes[ edge[1] - 1 ] = vertexes[ edge[0] -1 ] + edge[2]
+
+        return -1 if max(vertexes) == math.inf else max(vertexes)
+```

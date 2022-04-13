@@ -153,8 +153,10 @@ var lengthOfLongestSubstring = function(s) {
  * @return {number}
  */
 var networkDelayTime = function(times, n, k) {
+    //节点数组，用于存储起点节点到各节点距离
     let vertex = []
     for(let i = 0; i < n; i++){
+        //k为起始节点，初始化起始节点到自己距离为0，初始化到其他节点距离为正无穷
         if(i+1 == k){
             vertex[i] = 0
         }else{
@@ -162,8 +164,10 @@ var networkDelayTime = function(times, n, k) {
         }
     }
 
+    //最坏情况每次只更新起点到一个节点的距离，更新全部节点需要n-1次
     for(let i = 1; i < n ; i++){
         for(let v of times){
+            //如果现有的从起点到达:"某边终点:v[1]"的距离比从起点到达"该边起点:v[0]"+该边权重远，更新v[1]距离为更短的路径
             if(vertex[v[1]-1] >= vertex[v[0]-1] + v[2]){
                 vertex[v[1]-1] = vertex[v[0]-1] +v[2]
             }
