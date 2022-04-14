@@ -130,6 +130,64 @@ var lengthOfLongestSubstring = function(s) {
 ```
 复杂度：O(N)，其中N是字符串的长度。会遍历整个字符串一次。
 
+给定一个包含非负整数的 m x n 网格 grid ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+说明：每次只能向下或者向右移动一步。
+
+ 
+## 64.最小路径和
+示例 1：
+![示例 1](https://assets.leetcode.com/uploads/2020/11/05/minpath.jpg)
+
+输入：grid = [[1,3,1],[1,5,1],[4,2,1]]
+输出：7
+解释：因为路径 1→3→1→1→1 的总和最小。
+```js
+/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var minPathSum = function(grid) {
+    //建立一个与grid成本数组对应的成本和数组/状态转移数组
+    let dp = new Array()
+    for(let i in grid){
+        dp.push(new Array(grid[0].length).fill(0))
+    }
+    dp[0][0] = grid[0][0]
+    //从左上到右下，由于路径成本都是非负数，路径选择只有两种右或下，不存在绕圈走回头路
+    //由于不存在选择，左边和上边两条边缘的成本是固定的
+
+    //用成本加上前一个的成本和的方式初始化左边
+    for(let i in grid){
+        if(i!=0){
+            dp[i][0] = dp[i-1][0] +  grid[i][0]
+        }
+    }
+    //同样，初始化上边
+    for(let i in grid[0]){
+        if(i!=0){
+            dp[0][i] = dp[0][i-1] + grid[0][i]
+        }
+    }
+
+    //从左至右，从上至下的顺序处理，选择从从上方或左方成本和中小的那个加上此格成本，加入成本和数组
+    for(let i in grid){
+        //跳过最左一列，因为已经处理过
+        if(i<1){
+            continue
+        }
+        for(let j in grid[0]){
+            //同样跳过最上一行
+            if(j<1){
+                continue
+            }
+            dp[i][j] = Math.min(grid[i][j] + dp[i][j-1], grid[i][j] + dp[i-1][j])
+        }
+    }
+    //返回右下最终的路径成本和
+    return dp[grid.length-1][grid[0].length-1]
+};
+```
 
 ## 743. 网络延迟时间
 有 n 个网络节点，标记为 1 到 n。
