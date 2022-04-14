@@ -189,6 +189,48 @@ var minPathSum = function(grid) {
 };
 ```
 
+## 94.二叉树的中序遍历
+给定一个二叉树的根节点 root ，返回 它的 中序 遍历 。
+示例 1：
+![示例 1](https://assets.leetcode.com/uploads/2020/09/15/inorder_1.jpg)
+输入：root = [1,null,2,3]
+输出：[1,3,2]
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+
+var inorderTraversal = function(root) {
+
+    let res = []
+
+    function inorder(node){
+        // console.log(res)
+        if(node == undefined){
+            return []
+        }
+        // console.log(node.val)
+        inorder(node.left)
+        res.push(node.val)
+        inorder(node.right)
+        return res
+    }
+
+
+    return inorder(root)
+};
+```
+
 ## 743. 网络延迟时间
 有 n 个网络节点，标记为 1 到 n。
 
